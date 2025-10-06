@@ -1,4 +1,4 @@
-import mongoose, { Model, Types } from "mongoose";
+import mongoose, { Document, Model, Types } from "mongoose";
 import { IMenuItem } from "./MenuItem";
 import { ICustomer } from "./Customer";
 import { IBill } from "./Bills";

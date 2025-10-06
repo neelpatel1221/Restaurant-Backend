@@ -4,10 +4,16 @@ import Joi from "joi";
 import bcrypt from "bcrypt";
 import path from "path";
 import jwt from "jsonwebtoken";
-import {readFileSync} from "fs";
+import fs from "fs";
 
 const router = Router();
-const privateKey = readFileSync(path.join(__dirname, "..", "jwt", process.env.NODE_ENV, "jwtRS256.key"), "utf-8")
+
+const keyPath = process.env.NODE_ENV === "production"
+  ? path.join(__dirname, "..", "jwt", "production", "jwtRS256.key")
+  : path.join(__dirname, "..", "jwt", "development", "jwtRS256.key");
+
+// const privateKey = readFileSync(path.join(__dirname, "..", "jwt", process.env.NODE_ENV, "jwtRS256.key"), "utf-8")
+const privateKey = fs.readFileSync(keyPath, "utf-8");
 
 
 router.post("/login", async (req: Request, res: Response)=>{
