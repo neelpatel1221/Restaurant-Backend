@@ -12,10 +12,14 @@ app.set('trust proxy', 1)
 app.disable('x-powered-by')
 
 
-app.use(cors({
-  origin: [process.env.FRONTEND_URL],
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
-}))
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
