@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken"
-import {readFileSync} from "fs"
-import path from "path"
 import { User } from "../models/User";
 import { Token } from '../utils/NamespaceOverrides'
 
 
-const publicKey = readFileSync(path.join(__dirname, "..", "jwt", process.env.NODE_ENV, "jwtRS256.key.pub"), "utf-8")
+const publicKey = process.env.JWT_PUBLIC_KEY
+
+if (!publicKey) {
+  throw new Error("JWT_PUBLIC_KEY is not set in the environment variables.");
+}
+
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction)=>{
 try {
     const token = req.headers.authorization?.split(" ")[1]
