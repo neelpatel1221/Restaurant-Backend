@@ -39,7 +39,7 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length]',{
 
 
 
-app.use("/auth", userRoutes)
+app.use("/api/auth", userRoutes)
 app.use("/table", tableRoutes)
 app.use("/menu", menuRoutes)
 
