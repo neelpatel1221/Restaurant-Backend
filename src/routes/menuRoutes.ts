@@ -4,6 +4,9 @@ import { MenuCategory } from "../models/MenuCategory";
 import { MenuItem } from "../models/MenuItem";
 import { Request, Response, Router } from "express";
 import Joi from "joi";
+import upload from "../utils/multer";
+import cloudinary from "../utils/cloudinary";
+import streamifier from "streamifier";
 
 const router = Router()
 
@@ -22,13 +25,17 @@ router.get("/", async (req: Request, res: Response) => {
                 from: 'menuitems',
                 let: { catId: "$_id" },
                 pipeline: [
-                    { $match: { $expr: { $eq: ["$categoryId", "$$catId"] } } },
-                    { $match: { isAvailable: true } },
+                    {
+                        $match: {
+                            $expr: { $eq: ["$categoryId", "$$catId"] },
+                            isAvailable: true
+                        }
+                    },
                     {
                         $project: {
                             _id: 0,
                             itemId: "$_id",
-                            itemName: "$name",
+                            name: "$itemName",
                             itemDescription: "$description",
                             price: 1,
                             imageUrl: 1
@@ -36,29 +43,31 @@ router.get("/", async (req: Request, res: Response) => {
                     }
                 ],
                 as: "items"
-
             }
         },
         {
             $project: {
                 _id: 0,
-                categoryId: "$_id",
-                categoryName: "$name",
-                categoryDescription: "$description",
+                categoryName: "$categoryName",        
+                categoryId: "$_id",        
+                categoryDescription: "$description",   
                 items: 1
             }
         }
-    ])
+    ]);
 
-    res.send({ menu })
+    res.send( menu );
 })
 
-router.get("/list_categories", async(req: Request, res: Response)=>{
+
+
+
+router.get("/list_categories", async (req: Request, res: Response) => {
     const categories = await MenuCategory.find()
-    res.send({categories})
+    res.send({ categories })
 })
 
-router.get("/get_category/:id", async(req: Request, res: Response)=>{
+router.get("/get_category/:id", async (req: Request, res: Response) => {
     await Joi.object({
         id: Joi.string().required()
     }).validateAsync(req.params, {
@@ -131,17 +140,17 @@ router.delete("/delete_category/:id", async (req: Request, res: Response) => {
 
     const menuCategory = await MenuCategory.findByIdAndDelete(req.params.id)
 
-    if(!menuCategory) throw new Error("Menu Category Not Found")
+    if (!menuCategory) throw new Error("Menu Category Not Found")
 
     res.send({ message: "Menu Category Deleted Successfully" })
 })
 
-router.get("/list_menu_items", async(req: Request, res: Response)=>{
+router.get("/list_menu_items", async (req: Request, res: Response) => {
     const menuItems = await MenuItem.find().populate("categoryId")
-    res.send({menuItems})
+    res.send({ menuItems })
 })
 
-router.post("/create_menu_item", async (req: Request, res: Response) => {
+router.post("/create_menu_item", upload.single("image"), async (req: Request, res: Response) => {
     await Joi.object({
         itemName: Joi.string().required(),
         description: Joi.string().optional().allow(null, ""),
@@ -158,12 +167,35 @@ router.post("/create_menu_item", async (req: Request, res: Response) => {
     const isCatAvailable = await MenuCategory.findById(categoryId)
     if (!isCatAvailable) throw new Error("Menu Category Not Found")
 
+        let imageUrl = "";
+
+    if(req.file){
+        const streamUpload = async ()=>{
+            return new Promise((resolve, reject)=>{
+                const stream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: 'menu_items',
+                        resource_type: 'image'
+                    },
+                    (error, result)=>{
+                        if (result) resolve(result)
+                        else reject(error);
+                    }
+                );
+                streamifier.createReadStream(req.file.buffer).pipe(stream)
+            })
+        }
+        const result: any = await streamUpload()
+        imageUrl = result.secure_url;
+    }
+
     const menuItem = await MenuItem.create({
         itemName,
         description,
         price,
         categoryId,
-        isAvailable
+        isAvailable,
+        imageUrl
     })
 
     res.send({ menuItem, message: "Menu Item Created Successfully" })
