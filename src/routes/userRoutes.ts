@@ -35,7 +35,7 @@ router.post("/login", async (req: Request, res: Response)=>{
         name: doesUserExist.fullName,
         isActive: doesUserExist.isActive,
     }
-    const token = await jwt.sign(payload, privateKey, {
+    const token = jwt.sign(payload, privateKey, {
         algorithm: "RS256",
         expiresIn: '24h'
     })
