@@ -16,11 +16,20 @@ const corsOptions = {
   origin: process.env.FRONTEND_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false,
+  credentials: true,
 };
 
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: [process.env.FRONTEND_URL],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
+}))
 
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'hbs')
 
 app.use(morgan(':method :url :status :response-time ms - :res[content-length]',{
   skip: req => {
@@ -31,23 +40,11 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length]',{
   },
 }))
 
-app.use(express.static(path.join(__dirname, 'public')))
-
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'hbs')
-
-
-
-app.use("/menu", menuRoutes)
-
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
-
-
 
 
 app.use("/auth", userRoutes)
 app.use("/table", tableRoutes)
+app.use("/menu", menuRoutes)
 
 
 

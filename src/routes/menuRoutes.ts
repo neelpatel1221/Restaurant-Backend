@@ -5,8 +5,7 @@ import { MenuItem } from "../models/MenuItem";
 import { Request, Response, Router } from "express";
 import Joi from "joi";
 import upload from "../utils/multer";
-import cloudinary from "../utils/cloudinary";
-import streamifier from "streamifier";
+import { deleteFromCloudinary, uploadToCloudinary } from "../utils/cloudinary";
 
 const router = Router()
 
@@ -48,15 +47,15 @@ router.get("/", async (req: Request, res: Response) => {
         {
             $project: {
                 _id: 0,
-                categoryName: "$categoryName",        
-                categoryId: "$_id",        
-                categoryDescription: "$description",   
+                categoryName: "$categoryName",
+                categoryId: "$_id",
+                categoryDescription: "$description",
                 items: 1
             }
         }
     ]);
 
-    res.send( menu );
+    res.send(menu);
 })
 
 
@@ -167,26 +166,13 @@ router.post("/create_menu_item", upload.single("image"), async (req: Request, re
     const isCatAvailable = await MenuCategory.findById(categoryId)
     if (!isCatAvailable) throw new Error("Menu Category Not Found")
 
-        let imageUrl = "";
+    let imageUrl = "";
 
-    if(req.file){
-        const streamUpload = async ()=>{
-            return new Promise((resolve, reject)=>{
-                const stream = cloudinary.uploader.upload_stream(
-                    {
-                        folder: 'menu_items',
-                        resource_type: 'image'
-                    },
-                    (error, result)=>{
-                        if (result) resolve(result)
-                        else reject(error);
-                    }
-                );
-                streamifier.createReadStream(req.file.buffer).pipe(stream)
-            })
-        }
-        const result: any = await streamUpload()
-        imageUrl = result.secure_url;
+    if (req.file) {
+        let imageResult: any = req.file
+            ? await uploadToCloudinary(req.file.buffer)
+            : null;
+        imageUrl = imageResult?.secure_url || null;
     }
 
     const menuItem = await MenuItem.create({
@@ -201,7 +187,7 @@ router.post("/create_menu_item", upload.single("image"), async (req: Request, re
     res.send({ menuItem, message: "Menu Item Created Successfully" })
 })
 
-router.put("/update_menu_item/:id", async (req: Request, res: Response) => {
+router.put("/update_menu_item/:id", upload.single("image"), async (req: Request, res: Response) => {
     await Joi.object({
         itemName: Joi.string().required(),
         description: Joi.string().optional().allow(null, ""),
@@ -220,12 +206,21 @@ router.put("/update_menu_item/:id", async (req: Request, res: Response) => {
 
     const isCatAvailable = await MenuCategory.findById(categoryId)
     if (!isCatAvailable) throw new Error("Menu Category Not Found")
+    let imageUrl = "";
+
+    if (req.file) {
+        let imageResult: any = req.file
+            ? await uploadToCloudinary(req.file.buffer)
+            : null;
+        imageUrl = imageResult?.secure_url || null;
+    }
 
     meuItem.itemName = itemName
     meuItem.description = description
     meuItem.price = price
     meuItem.categoryId = categoryId
     meuItem.isAvailable = isAvailable
+    meuItem.imageUrl = imageUrl ?? meuItem.imageUrl
 
     await meuItem.save()
 
@@ -242,6 +237,10 @@ router.delete("/delete_menu_item/:id", async (req: Request, res: Response) => {
 
     const meuItem = await MenuItem.findById(req.params.id)
     if (!meuItem) throw new Error("Menu Item Not Found")
+
+    if(meuItem.imageUrl){
+        await deleteFromCloudinary(meuItem.imageUrl)
+    }
 
     await meuItem.deleteOne()
 
