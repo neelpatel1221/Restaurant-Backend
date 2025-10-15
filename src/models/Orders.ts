@@ -25,6 +25,8 @@ export interface IOrder extends Document {
   billId: Types.ObjectId | IBill;
   items: IOrderItem[];
   status: OrderStatus;
+  isActive: boolean;
+  totalAmount: number;
 }
 
 
@@ -56,6 +58,14 @@ const OrderSchema = new mongoose.Schema<IOrder>({
     enum: Object.values(OrderStatus),
     default: OrderStatus.PENDING,
   },
+  totalAmount: {
+    type: Number,
+    default: 0
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  }
   // totalAmount: {
   //   type: Number,
   //   required: true,
