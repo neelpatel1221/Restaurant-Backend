@@ -3,14 +3,14 @@ import { ITable } from "./Table";
 import { IOrder } from "./Orders";
 
 export enum BillPaymentStatus {
-    PENDING = "PENDING",
-    PARTIAL = "PARTIAL",
-    PAID = "PAID"
+  PENDING = "PENDING",
+  PARTIAL = "PARTIAL",
+  PAID = "PAID"
 }
 export enum BillStatus {
-    OPEN = "OPEN",
-    CLOSED = "CLOSED",
-    CANCELLED = "CANCELLED"
+  OPEN = "OPEN",
+  CLOSED = "CLOSED",
+  CANCELLED = "CANCELLED"
 }
 
 
