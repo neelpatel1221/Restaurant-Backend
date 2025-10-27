@@ -102,14 +102,80 @@ export function MenuCategoryList() {
         <>
             <Card className="w-full mb-5 max-w-full">
                 <CardHeader>
-                    <CardTitle>Menu Categorys</CardTitle>
+                    <CardTitle className="text-lg font-bold text-gray-800">Menu Categories</CardTitle>
                 </CardHeader>
+
                 <CardContent>
-                    <TableComponent
-                        data={categories}
-                        columns={columns}
-                        showColumnToggle={true}
-                    />
+                    {/* DESKTOP TABLE VIEW */}
+                    <div className="hidden md:block">
+                        <TableComponent
+                            data={categories}
+                            columns={columns}
+                            showColumnToggle={true}
+                        />
+                    </div>
+
+                    {/* MOBILE CARD VIEW */}
+                    <div className="block md:hidden space-y-3">
+                        {categories?.length > 0 ? (
+                            categories.map((category) => (
+                                <div
+                                    key={category._id}
+                                    className="border border-orange-100 bg-white rounded-xl shadow-sm p-3 flex justify-between items-start hover:shadow-md transition-all"
+                                >
+                                    {/* Left Side: Info */}
+                                    <div className="flex-1">
+                                        <h3 className="text-sm font-semibold text-gray-900 capitalize">
+                                            {category.categoryName}
+                                        </h3>
+                                        <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                            {category.description || "No description"}
+                                        </p>
+                                        <span
+                                            className={`inline-block mt-2 text-xs font-medium px-2 py-0.5 rounded-full ${category.isActive
+                                                ? "bg-green-100 text-green-700"
+                                                : "bg-red-100 text-red-700"
+                                                }`}
+                                        >
+                                            {category.isActive ? "Active" : "Inactive"}
+                                        </span>
+                                    </div>
+
+                                    {/* Right Side: Actions */}
+                                    <div className="flex flex-col items-end gap-1 ml-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => openCategoryEditModal(category._id)}
+                                            className="h-8 w-8 hover:bg-blue-50"
+                                        >
+                                            <Pencil className="w-4 h-4 text-blue-500" />
+                                        </Button>
+
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={async () => {
+                                                try {
+                                                    await dispatch(deleteCategory(category._id)).unwrap();
+                                                    dispatch(getMenuCategorys());
+                                                } catch (error) {
+                                                    console.error("Delete failed", error);
+                                                }
+                                            }}
+                                            className="h-8 w-8 hover:bg-red-50"
+                                        >
+                                            <Trash className="w-4 h-4 text-red-500" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-gray-500 text-sm">No categories found.</p>
+                        )}
+                    </div>
+
+                    {/* Category Form */}
                     <CategoryForm
                         showAsDialog={isCategoryModalOpen}
                         showAsCard={false}
@@ -118,7 +184,6 @@ export function MenuCategoryList() {
                     />
                 </CardContent>
             </Card>
-            {/* <Toaster /> */}
         </>
-    )
+    );
 }

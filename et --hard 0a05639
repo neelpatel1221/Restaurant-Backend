@@ -1,0 +1,21 @@
+[33m6108fe2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{0}: reset: moving to 6108fe2
+[33m6108fe2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{1}: reset: moving to 6108fe2
+[33mc7ddbb8[m HEAD@{2}: reset: moving to c7ddbb8
+[33m06ecd0a[m HEAD@{3}: revert: Revert "create order , quick actions, order listing"
+[33ma2dda7a[m HEAD@{4}: cherry-pick: create order , quick actions, order listing
+[33ma3598c3[m HEAD@{5}: revert: Revert "create order , quick actions, order listing"
+[33m8ec85bd[m HEAD@{6}: reset: moving to origin/development
+[33mc7ddbb8[m HEAD@{7}: reset: moving to c7ddbb8e7330bc01fc271dc55905c6946690ceff
+[33md4f2190[m HEAD@{8}: checkout: moving from restore-state to development
+[33mc7ddbb8[m HEAD@{9}: reset: moving to c7ddbb8
+[33mc7ddbb8[m HEAD@{10}: checkout: moving from c7ddbb8e7330bc01fc271dc55905c6946690ceff to restore-state
+[33mc7ddbb8[m HEAD@{11}: checkout: moving from development to c7ddbb8
+[33md4f2190[m HEAD@{12}: reset: moving to HEAD~
+[33m6108fe2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{13}: reset: moving to HEAD~
+[33mc7ddbb8[m HEAD@{14}: reset: moving to HEAD~
+[33m8ec85bd[m HEAD@{15}: commit (merge): Resolved merge conflicts between local and remote development
+[33mc7ddbb8[m HEAD@{16}: commit: create order , quick actions, order listing
+[33m6108fe2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m HEAD@{17}: checkout: moving from my-new-branch to development
+[33m9c3c179[m HEAD@{18}: commit: ui
+[33m5500bbf[m[33m ([m[1;32mmain[m[33m)[m HEAD@{19}: checkout: moving from main to my-new-branch
+[33m5500bbf[m[33m ([m[1;32mmain[m[33m)[m HEAD@{20}: clone: from https://github.com/neelpatel1221/Restaurant-Frontend.git

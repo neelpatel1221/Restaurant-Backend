@@ -42,7 +42,7 @@ export function MenuListView() {
   const dispatch = useDispatch<AppDispatch>()
   const { menu } = useSelector((state: RootState) => state.menu)
   const { items: cart } = useSelector((state: RootState) => state.cart)
-  const {id: tableId} = useParams();
+  const { id: tableId } = useParams();
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -204,70 +204,62 @@ export function MenuListView() {
                   return (
                     <Card
                       key={item.itemId}
-                      className="overflow-hidden hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border border-orange-100"
+                      className="flex items-center gap-2 p-2 border border-orange-100 rounded-xl bg-white hover:shadow-md transition-all hover:scale-[1.01]"
                     >
-                      <div className="h-44 bg-gradient-to-r from-orange-100 to-red-100 flex items-center justify-center overflow-hidden">
+                      {/* IMAGE */}
+                      <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-orange-50">
                         <img
                           src={item.imageUrl}
                           alt={item.name}
-                          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         />
                       </div>
 
-                      <CardHeader className="space-y-1">
-                        <CardTitle className="text-lg font-semibold text-gray-900">
-                          {item.name}
-                        </CardTitle>
-                        <CardDescription className="text-sm text-gray-600 line-clamp-2">
-                          {item.itemDescription}
-                        </CardDescription>
-                      </CardHeader>
+                      {/* DETAILS */}
+                      <div className="flex flex-col justify-center flex-1 min-w-0">
+                        <div className="flex justify-between items-start">
+                          <h3 className="font-semibold text-gray-900 text-sm truncate">{item.name}</h3>
+                          <p className="text-sm font-bold text-orange-600 ml-2 whitespace-nowrap">₹{item.price}</p>
 
-                      <CardContent>
-                        <p className="text-lg font-bold text-gray-800">₹{item.price}</p>
-                      </CardContent>
+                        </div>
 
-                      <CardFooter>
-                        {!cartItem ? (
-                          <Button
-                            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-md"
-                            onClick={() => dispatch(addToCart(item))}
-                          >
-                            Add to Cart
-                          </Button>
-                        ) : (
-                          <div className="flex items-center justify-between w-full bg-orange-50 rounded-lg p-2 border border-orange-200">
+                        <p className="text-[11px] text-gray-600 line-clamp-2">{item.itemDescription}</p>
+
+                        {/* CART BUTTONS */}
+                        <div className="flex items-center justify-end mt-1">
+                          {!cartItem ? (
                             <Button
-                              variant="ghost"
                               size="sm"
-                              onClick={() => dispatch(decrementQuantity(item.itemId))}
-                              className="rounded-full hover:bg-orange-100"
+                              className="h-7 px-3 text-xs bg-orange-500 hover:bg-orange-600 text-white rounded-md"
+                              onClick={() => dispatch(addToCart(item))}
                             >
-                              <Minus className="w-4 h-4 text-orange-600" />
+                              Add
                             </Button>
-                            <span className="text-md font-semibold text-gray-800">
-                              {cartItem.quantity}
-                            </span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => dispatch(incrementQuantity(item.itemId))}
-                              className="rounded-full hover:bg-orange-100"
-                            >
-                              <Plus className="w-4 h-4 text-orange-600" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => dispatch(removeFromCart(item.itemId))}
-                              className="rounded-full hover:bg-red-100"
-                            >
-                              <Trash className="w-4 h-4 text-red-600" />
-                            </Button>
-                          </div>
-                        )}
-                      </CardFooter>
+                          ) : (
+                            <div className="flex items-center gap-1 bg-orange-50 rounded-md px-2 py-1 border border-orange-200">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => dispatch(decrementQuantity(item.itemId))}
+                                className="p-0 hover:bg-orange-100"
+                              >
+                                <Minus className="w-3 h-3 text-orange-600" />
+                              </Button>
+                              <span className="text-xs font-medium">{cartItem.quantity}</span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => dispatch(incrementQuantity(item.itemId))}
+                                className="p-0 hover:bg-orange-100"
+                              >
+                                <Plus className="w-3 h-3 text-orange-600" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </Card>
+
                   )
                 })}
               </div>
